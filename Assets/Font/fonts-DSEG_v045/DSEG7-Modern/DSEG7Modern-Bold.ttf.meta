@@ -1,0 +1,26 @@
+fileFormatVersion: 2
+guid: 85521e3a9ae6aee46bd68d25ccab0f17
+timeCreated: 1518147378
+licenseType: Free
+TrueTypeFontImporter:
+  externalObjects: {}
+  serializedVersion: 4
+  fontSize: 16
+  forceTextureCase: -2
+  characterSpacing: 0
+  characterPadding: 1
+  includeFontData: 1
+  fontName: DSEG7 Modern
+  fontNames:
+  - DSEG7 Modern
+  fallbackFontReferences:
+  - {fileID: 12800000, guid: 44e8c9087bdacc442b62dbe166cac09a, type: 3}
+  - {fileID: 12800000, guid: 6cb4f06e35a9c754ab484bc5a702e2f7, type: 3}
+  - {fileID: 12800000, guid: 29a4fc6fab266ed44869976c325eab69, type: 3}
+  customCharacters: 
+  fontRenderingMode: 0
+  ascentCalculationMode: 1
+  useLegacyBoundsCalculation: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

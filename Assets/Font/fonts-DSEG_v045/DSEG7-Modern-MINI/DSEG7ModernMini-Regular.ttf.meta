@@ -1,0 +1,27 @@
+fileFormatVersion: 2
+guid: 4625880beeee8b44e811cf62170e5a4e
+timeCreated: 1518147376
+licenseType: Free
+TrueTypeFontImporter:
+  externalObjects: {}
+  serializedVersion: 4
+  fontSize: 16
+  forceTextureCase: -2
+  characterSpacing: 0
+  characterPadding: 1
+  includeFontData: 1
+  fontName: DSEG7 Modern Mini
+  fontNames:
+  - DSEG7 Modern Mini
+  fallbackFontReferences:
+  - {fileID: 12800000, guid: 0740d06331015f84197a5ebb87cb6aff, type: 3}
+  - {fileID: 12800000, guid: 395bd3a891602fa4cb5af2c6d4848874, type: 3}
+  - {fileID: 12800000, guid: 362fd4fb0d36d1447881d0b9e4cbcffb, type: 3}
+  - {fileID: 12800000, guid: 195b688da66a35f418a5f635f32fd3b5, type: 3}
+  customCharacters: 
+  fontRenderingMode: 0
+  ascentCalculationMode: 1
+  useLegacyBoundsCalculation: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

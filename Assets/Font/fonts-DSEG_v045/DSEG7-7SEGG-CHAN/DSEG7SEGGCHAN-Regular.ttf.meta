@@ -1,0 +1,24 @@
+fileFormatVersion: 2
+guid: b2b203188aad9e247adc33d8a8a1f12e
+timeCreated: 1518147379
+licenseType: Free
+TrueTypeFontImporter:
+  externalObjects: {}
+  serializedVersion: 4
+  fontSize: 16
+  forceTextureCase: -2
+  characterSpacing: 0
+  characterPadding: 1
+  includeFontData: 1
+  fontName: DSEG7 7SEGGCHAN
+  fontNames:
+  - DSEG7 7SEGGCHAN
+  fallbackFontReferences:
+  - {fileID: 12800000, guid: b22dda2f7ac021f42a1bf6d5338df4e6, type: 3}
+  customCharacters: 
+  fontRenderingMode: 0
+  ascentCalculationMode: 1
+  useLegacyBoundsCalculation: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

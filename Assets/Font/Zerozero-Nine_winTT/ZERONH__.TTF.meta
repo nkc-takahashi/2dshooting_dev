@@ -1,0 +1,22 @@
+fileFormatVersion: 2
+guid: ab30bd407f4512b49802742216afd5dd
+timeCreated: 1518419125
+licenseType: Free
+TrueTypeFontImporter:
+  externalObjects: {}
+  serializedVersion: 4
+  fontSize: 16
+  forceTextureCase: -2
+  characterSpacing: 0
+  characterPadding: 1
+  includeFontData: 1
+  fontName: ZerozeroNineHr
+  fontNames:
+  - ZerozeroNineHr
+  fallbackFontReferences: []
+  customCharacters: 
+  fontRenderingMode: 0
+  ascentCalculationMode: 1
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

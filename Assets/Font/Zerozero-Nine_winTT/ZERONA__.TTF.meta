@@ -1,0 +1,22 @@
+fileFormatVersion: 2
+guid: 32067b8151d405a429e0650dd398f89b
+timeCreated: 1518419125
+licenseType: Free
+TrueTypeFontImporter:
+  externalObjects: {}
+  serializedVersion: 4
+  fontSize: 16
+  forceTextureCase: -2
+  characterSpacing: 0
+  characterPadding: 1
+  includeFontData: 1
+  fontName: ZerozeroNineAl
+  fontNames:
+  - ZerozeroNineAl
+  fallbackFontReferences: []
+  customCharacters: 
+  fontRenderingMode: 0
+  ascentCalculationMode: 1
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

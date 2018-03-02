@@ -1,0 +1,26 @@
+fileFormatVersion: 2
+guid: 74fc60f6139741d4b9c65a9626c689a7
+timeCreated: 1518147377
+licenseType: Free
+TrueTypeFontImporter:
+  externalObjects: {}
+  serializedVersion: 4
+  fontSize: 16
+  forceTextureCase: -2
+  characterSpacing: 0
+  characterPadding: 1
+  includeFontData: 1
+  fontName: DSEG14 Classic Mini
+  fontNames:
+  - DSEG14 Classic Mini
+  fallbackFontReferences:
+  - {fileID: 12800000, guid: 50844e342ced2cf43985c0ea4193d0f4, type: 3}
+  - {fileID: 12800000, guid: 58f7a825e4702924481c62a063263c36, type: 3}
+  - {fileID: 12800000, guid: 3e3a567f795798941a021512a51f7cb3, type: 3}
+  customCharacters: 
+  fontRenderingMode: 0
+  ascentCalculationMode: 1
+  useLegacyBoundsCalculation: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
