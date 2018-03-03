@@ -11,3 +11,6 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scene/2DShooting.unity
     guid: 7132e9cf1b0e4fb4cbf553c68bca7b15
+  - enabled: 1
+    path: Assets/Scene/Start.unity
+    guid: a693ecb2e323fb34aa75624737173500
