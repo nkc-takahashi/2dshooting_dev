@@ -38,7 +38,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4443689395044138}
   m_Layer: 0
-  m_Name: muzzle
+  m_Name: Muzzle
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -107,33 +107,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e2cc3d53dfc8f954cb2ab669005a5296, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  modechange: 2
-  bullettype: 1
+  _muzzle: {fileID: 1404664060961752}
   Bullettype:
   - {fileID: 1499106044914830, guid: 8a1bb5302d4b8224aa9de0b5a1105ecb, type: 2}
   - {fileID: 1458217191945452, guid: 65d99628b89cdf7449370970530b8b86, type: 2}
   - {fileID: 1694499818795102, guid: b96e491072a44b542b85493e61dfc8d3, type: 2}
-  hp: 0
-  mouseinputswitch: 0
-  noreroadswitch: 0
-  shiledswitch: 0
-  invisibleswitch: 0
-  recoveryswitch: 0
-  speedx: 0
-  speedy: 0
-  bulletvolume: 0
-  bulletinterval: 0
-  interval: 0
-  trajectoryvalue: 0
-  remaining: 0
-  rotationspeed: 0
-  reroadinterval: 0
-  recoverhpinterval: 5
-  recoverinterval: 0
-  playerctrl: {fileID: 0}
-  bullet: {fileID: 0}
-  muzzle: {fileID: 0}
-  shiled: {fileID: 0}
+  playerhp: 0
+  shieldhp: 0
+  shield: {fileID: 0}
+  Maxpos: {fileID: 0}
+  Minpos: {fileID: 0}
   maxpos: {x: 0, y: 0}
   minpos: {x: 0, y: 0}
 --- !u!212 &212357882248274572

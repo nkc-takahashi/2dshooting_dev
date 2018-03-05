@@ -101,7 +101,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9fad9f9b2a2e35241beaedd73d024359, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  bullettype: 2
+  bullettype: 1
   bulletspeed: 4
   homingrotatespeed: 0
   homingtiming: 1

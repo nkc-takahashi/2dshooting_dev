@@ -1,261 +1,288 @@
 ﻿using UnityEngine;
 using System.Collections;
-using UnityEngine.UI;
 
-public class Player : MonoBehaviour
+namespace InariSystem.MajiManji
 {
-    [HideInInspector]
-    string modechange;
-
-
-    public GameObject[] Bullettype;
-
-    public float playerhp,shieldhp;
-
-    [System.NonSerialized] public bool mouseinputswitch, noreloadswitch, shieldswitch, invisibleswitch, recoveryswitch;
-    //private
-    [System.NonSerialized]
-    public float
-    speedx, speedy,         //移動スピード
-    bulletvolume,           //弾数初期値
-    bulletinterval,         /*発砲する間隔*/ interval,
-    trajectoryvalue,        //弾道のブレ幅
-    remaining,              //変動する弾数
-    rotationspeed,          //マウスの追うスピード
-    reloadinterval,         //
-    recoverhpinterval = 5,      /* */ recoverinterval;
-
-
-    GameObject playerctrl, bullet, muzzle,shieldobj;
-    public GameObject shield;
-    public GameObject Maxpos, Minpos;
-
-    public Vector2 maxpos, minpos;
-    Quaternion bulletRough;Rigidbody2D rd;
-    [System.NonSerialized] public float remainingbulletvalue;
-    [System.NonSerialized] public Vector2 Position;
-    [System.NonSerialized] public string bullettype;
-
-    void Start()
+    public class Player : MonoBehaviour
     {
-        playerctrl = GameObject.Find("PlayerController");
-        interval = bulletinterval;
-        bulletinterval = playerctrl.GetComponent<PlayerControl>().bulletinterval;
-        Playerctrlset();
-        remainingbulletvalue = bulletvolume;
-        muzzle = transform.Find("muzzle").gameObject;
-        modechange = playerctrl.GetComponent<PlayerControl>().modechange.ToString(); bullettype = playerctrl.GetComponent<PlayerControl>().bullettype.ToString();
-    }
+        [SerializeField]
+        private GameObject _muzzle;
 
-    void Playerctrlset()
-    {
-        playerhp = playerctrl.GetComponent<PlayerControl>().playerhp;
-        speedx = playerctrl.GetComponent<PlayerControl>().speedx; speedy = playerctrl.GetComponent<PlayerControl>().speedy;
-        bulletinterval = playerctrl.GetComponent<PlayerControl>().bulletinterval;
-        bulletvolume = playerctrl.GetComponent<PlayerControl>().bulletvolume;
-        rotationspeed = playerctrl.GetComponent<PlayerControl>().rotationspeed;
-        trajectoryvalue = playerctrl.GetComponent<PlayerControl>().trajectoryvalue;
-    }
+        private GameObject _bullet;
 
-    void Update()
-    {
-        ModeChange(); Actionrange();
-    }
+        private GameObject _shield;
 
-    void ModeChange()
-    {
-        switch (modechange)
+        [SerializeField]
+        private PlayerControl _playerControl;
+
+        private string _modeChange;
+
+        [SerializeField]
+        private GameObject[] _bulletType;
+
+        public float Health, Shield;
+
+        [SerializeField]
+        private GameObject _shieldObject;
+
+        [System.NonSerialized]
+        public bool _freeRotation, noreloadswitch, shieldswitch, invisibleswitch, recoveryswitch;
+
+        //private
+        [System.NonSerialized]
+        public float
+            SpeedX,
+            SpeedY, //移動スピード
+            BulletAmount, //弾数初期値
+            BulletInterval, /*発砲する間隔*/
+            Interval,
+            TrajectoryAmount, //弾道のブレ幅
+            Remaining, //変動する弾数
+            RotationSpeed, //マウスの追うスピード
+            ReloadInterval, //
+            RecoverHealthInterval = 5, /* */
+            RecoverInterval;
+
+        public GameObject Maxpos, Minpos;
+
+        public Vector2 maxpos, minpos;
+        Quaternion bulletRough;
+        
+        private Rigidbody2D _rigidbody;
+
+        [System.NonSerialized]
+        public float remainingbulletvalue;
+
+        [System.NonSerialized]
+        public Vector2 Position;
+
+        [System.NonSerialized]
+        public BulletType bullettype;
+
+        private void Start()
         {
-            case "Normal":
-                BulletSetType(); Move();Rotate();Bullet();Shield();  Actionrange();
-                invisibleswitch = false;noreloadswitch = false;
-                break;
-            case "Invisible":
-                BulletSetType(); Move(); Rotate(); Bullet(); Shield();  Actionrange();
-                invisibleswitch = true;noreloadswitch = true;
-                break;
-            //case "Debugmode":
-            //    BulletSetType(); Move(); Rotate(); Bullet(); shield();  Playerctrlset(); Actionrange();
-            //    invisibleswitch = false;recoveryswitch = true; recovery();
-            //    break;
+            _playerControl = GameObject.Find("PlayerController").GetComponent<PlayerControl>();
+            Interval = BulletInterval;
+            BulletInterval = _playerControl.BulletInterval;
+            InitializeStatus();
+            remainingbulletvalue = BulletAmount;
+            _muzzle = transform.Find("muzzle").gameObject;
+            _modeChange = _playerControl.modechange.ToString();
+            bullettype = _playerControl.bullettype;
         }
-    }
+
+        private void InitializeStatus()
+        {
+            Health = _playerControl.Health;
+            SpeedX = _playerControl.SpeedX;
+            SpeedY = _playerControl.SpeedY;
+            BulletInterval = _playerControl.BulletInterval;
+            BulletAmount = _playerControl.BulletAmount;
+            RotationSpeed = _playerControl.RotationSpeed;
+            TrajectoryAmount = _playerControl.TrajectoryAmount;
+        }
+
+        private void Update()
+        {
+            ModeChange();
+            Actionrange();
+        }
+
+        private void ModeChange()
+        {
+            switch (_modeChange)
+            {
+                case "Normal":
+                    BulletSetType();
+                    Move();
+                    Rotate();
+                    Bullet();
+                    Guard();
+                    Actionrange();
+                    invisibleswitch = false;
+                    noreloadswitch = false;
+                    break;
+                case "Invisible":
+                    BulletSetType();
+                    Move();
+                    Rotate();
+                    Bullet();
+                    Guard();
+                    Actionrange();
+                    invisibleswitch = true;
+                    noreloadswitch = true;
+                    break;
+                //case "Debugmode":
+                //    BulletSetType(); Move(); Rotate(); Bullet(); shield();  Playerctrlset(); Actionrange();
+                //    invisibleswitch = false;recoveryswitch = true; recovery();
+                //    break;
+            }
+        }
 
 
-    // --- 移動制御 ---
-    void Move()
-    {
-        Vector2 SPEED = new Vector2(speedx, speedy);
-        Position = transform.position;  //現在位置
-        if (Input.GetKey(KeyCode.A) || Input.GetKey("left"))
+        // --- 移動制御 ---
+        private void Move()
         {
-            Position.x -= SPEED.x;
+            var speed = new Vector2(SpeedX, SpeedY);
+            Position = transform.position; //現在位置
+            if (Input.GetKey(KeyCode.A) || Input.GetKey("left"))
+            {
+                Position.x -= speed.x;
+            }
+
+            if (Input.GetKey(KeyCode.D) || Input.GetKey("right"))
+            {
+                Position.x += speed.x;
+            }
+
+            if (Input.GetKey(KeyCode.W) || Input.GetKey("up"))
+            {
+                Position.y += speed.y;
+            }
+
+            if (Input.GetKey(KeyCode.S) || Input.GetKey("down"))
+            {
+                Position.y -= speed.y;
+            }
+
+            transform.position = Position;
+            Clamp();
         }
-        if (Input.GetKey(KeyCode.D) || Input.GetKey("right"))
+
+        private void Clamp()
         {
-            Position.x += SPEED.x;
+            Position.x = Mathf.Clamp(Position.x, minpos.x, maxpos.x);
+            Position.y = Mathf.Clamp(Position.y, minpos.y, maxpos.y);
+            transform.position = new Vector2(Position.x, Position.y);
         }
-        if (Input.GetKey(KeyCode.W) || Input.GetKey("up"))
-        {
-            Position.y += SPEED.y;
-        }
-        if (Input.GetKey(KeyCode.S) || Input.GetKey("down"))
-        {
-            Position.y -= SPEED.y;
-        }
-        transform.position = Position;
-        Clamp();
-    }
-    void Clamp()
-    {
-        Position.x = Mathf.Clamp(Position.x, minpos.x, maxpos.x);
-        Position.y = Mathf.Clamp(Position.y, minpos.y, maxpos.y);
-        transform.position = new Vector2(Position.x, Position.y);
-    }
 
 
-    // --- マウス方向を向く --- 
-    void Rotate()
-    {
-        if (mouseinputswitch == true)
+        // --- マウス方向を向く --- 
+        private void Rotate()
         {
             if (Input.GetKeyDown(KeyCode.Z))
             {
-                mouseinputswitch = false;
+                _freeRotation = !_freeRotation;
             }
+
+            var destination = _freeRotation
+                ? Input.mousePosition - Camera.main.WorldToScreenPoint(transform.localPosition)
+                : Vector3.up;
+
+            var rotation = Quaternion.LookRotation(Vector3.forward, destination);
+            transform.rotation = Quaternion.Slerp(transform.rotation, rotation, Time.deltaTime * RotationSpeed);
         }
-        else
+
+
+        // --- 発砲 ---
+        private void Bullet()
         {
-            if (Input.GetKeyDown(KeyCode.Z))
+            Interval -= Time.deltaTime;
+            bulletRough = transform.rotation;
+            bulletRough.z += Random.Range(-TrajectoryAmount / 100, TrajectoryAmount / 100);
+            if (remainingbulletvalue > 0)
             {
-                mouseinputswitch = true;
+                if (Interval <= 0 && (Input.GetKey(KeyCode.Space) || Input.GetMouseButton(0)))
+                {
+                    Interval = BulletInterval;
+                    remainingbulletvalue -= 1;
+                    Instantiate(_bullet, _muzzle.transform.position, bulletRough);
+                    Debug.Log("発砲");
+                }
+                else
+                {
+                    Interval = 0;
+                }
             }
-        }
-        if (mouseinputswitch)
-        {
-            Vector3 pos = Camera.main.WorldToScreenPoint(transform.localPosition);
-            Quaternion rotation = Quaternion.LookRotation(Vector3.forward, Input.mousePosition - pos);
-            transform.rotation = Quaternion.Slerp(transform.rotation, rotation, Time.deltaTime * rotationspeed);
-        }
-        else
-        {
-            Quaternion rotation = Quaternion.LookRotation(Vector3.forward, Vector3.up);
-            transform.rotation = Quaternion.Slerp(transform.rotation, rotation, Time.deltaTime * rotationspeed);
-        }
-    }
 
-
-    // --- 発砲 ---
-    void Bullet()
-    {
-        interval -= Time.deltaTime;
-        bulletRough = transform.rotation;
-        bulletRough.z += Random.Range(-trajectoryvalue / 100, trajectoryvalue / 100);
-        if (remainingbulletvalue > 0)
-        {
-            if (interval <= 0 && (Input.GetKey(KeyCode.Space) || Input.GetMouseButton(0)))
+            if (Input.GetKey(KeyCode.R))
             {
-                interval = bulletinterval;
-                remainingbulletvalue -= 1;
-                Instantiate(bullet, muzzle.transform.position, bulletRough);
-                Debug.Log("発砲");
+                StartCoroutine(Reload());
             }
-            else
+        }
+
+        private IEnumerator Reload()
+        {
+            yield return new WaitForSeconds(ReloadInterval);
+            remainingbulletvalue = BulletAmount;
+            yield return null;
+        }
+
+
+        // --- 自動ヒール --- 
+        private void Recovery()
+        {
+            if (RecoverInterval < 0 && _playerControl.Health != Health)
             {
-                interval = 0;
+                RecoverInterval = 6;
             }
-        }
-        if (Input.GetKey(KeyCode.R))
-        {
-            StartCoroutine("reload");
-        }
-    }
-    IEnumerator reload()
-    {
-        yield return new WaitForSeconds(reloadinterval);
-        remainingbulletvalue = bulletvolume;
-        yield return null;
-    }
 
-
-    // --- 自動ヒール --- 
-    void recovery()
-    {
-        if(recoverinterval < 0 && playerctrl.GetComponent<PlayerControl>().playerhp != playerhp)
-        {
-            recoverinterval = 6;
-        }
-       if(recoverinterval == 6 && playerctrl.GetComponent<PlayerControl>().playerhp != playerhp)
-        {
-            playerhp += 1;
-        }
-        else if(recoverinterval <= 5)
-        {
-            recoverinterval -=Time.deltaTime;
-        }
-    }
-
-    // --- シールド ---
-    void Shield()
-    {
-        if (Input.GetKey(KeyCode.Q) && shieldswitch == false)
-        {
-            shieldswitch = true;
-            Instantiate(shield, transform.position, bulletRough, transform);
-            shieldobj = transform.Find("shield(Clone)").gameObject;
-        }
-        if (shieldobj != null)
-        {
-            shieldhp = transform.Find("shield(Clone)").gameObject.GetComponent<Shield>().shieldhp;
-        }
-    }
-
-
-    // --- バレットタイプセット ---
-    void BulletSetType()
-    {
-        switch (bullettype)
-        {
-            case "BulletA":
-                bullet = Bullettype[0];
-                break;
-
-            case "BulletB":
-                bullet = Bullettype[1];
-                break;
-
-            case "BulletC":
-                bullet = Bullettype[2];
-                break;
-
-            case "BulletD":
-
-                break;
-        }
-    }
-
-    void Actionrange()
-    {
-        Maxpos = GameObject.Find("maxpos");
-        Minpos = GameObject.Find("minpos");
-        if (Maxpos != null && Minpos != null)
-        {
-            maxpos = Maxpos.GetComponent<Transform>().position;
-            minpos = Minpos.GetComponent<Transform>().position;
-        }
-    }
-
-    // --- 衝突判定 ---
-    public void OnTriggerEnter2D(Collider2D collision)
-    {
-        if (collision.tag == "BulletTypeEnemy" && shieldswitch == false && invisibleswitch == false)
-        {
-            playerhp -= 1;
-            recoverinterval = 5;
-            if (playerhp < 0)
+            if (RecoverInterval == 6 && _playerControl.Health != Health)
             {
-                Destroy(gameObject);
+                Health += 1;
             }
+            else if (RecoverInterval <= 5)
+            {
+                RecoverInterval -= Time.deltaTime;
+            }
+        }
+
+        // --- シールド ---
+        private void Guard()
+        {
+            if (Input.GetKey(KeyCode.Q) && shieldswitch == false)
+            {
+                shieldswitch = true;
+                Instantiate(_shieldObject, transform.position, bulletRough, transform);
+                _shield = transform.Find("shield(Clone)").gameObject;
+            }
+
+            if (_shield != null)
+            {
+                Shield = transform.Find("shield(Clone)").gameObject.GetComponent<Shield>().shieldhp;
+            }
+        }
+
+
+        // --- バレットタイプセット ---
+        private void BulletSetType()
+        {
+            switch (bullettype)
+            {
+                case BulletType.TypeA: _bullet = _bulletType[0]; break;
+
+                case BulletType.TypeB: _bullet = _bulletType[1]; break;
+
+                case BulletType.TypeC: _bullet = _bulletType[2]; break;
+
+                default: break;
+            }
+        }
+
+        [SerializeField]
+        private Transform _maxPos;
+        [SerializeField]
+        private Transform _minPos;
+
+        private void Actionrange()
+        {
+            maxpos = _maxPos.position;
+            minpos = _minPos.position;
+        }
+
+        // --- 衝突判定 ---
+        private void OnTriggerEnter2D(Collider2D collision)
+        {
+            if (shieldswitch == false && invisibleswitch == false)
+                if (collision.CompareTag("BulletTypeEnemy"))
+                {
+                    Health -= 1;
+                    RecoverInterval = 5;
+                    if (Health < 0)
+                    {
+                        Destroy(gameObject);
+                    }
+                }
         }
     }
 }

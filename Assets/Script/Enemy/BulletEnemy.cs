@@ -1,6 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
 public class BulletEnemy : MonoBehaviour {
 
@@ -11,21 +9,8 @@ public class BulletEnemy : MonoBehaviour {
 
     public bool mouserotateswitch;
     public float DestroyTiming;
-
-
-    // Use this for initialization
-    void Start ()
-    {
-        GetComponent<Rigidbody2D>().velocity = (transform.up * tamaSpeed);
-    }
-
-    // Update is called once per frame
-    void Update ()
-    {
-        ByeBye();   //消える
-        //Rotate();   //追尾    
-    }
-    void Rotate()                                                   //マウス方向を向く
+    
+    private void Rotate()                                                   //マウス方向を向く
     {
         if (mouserotateswitch)
         {
@@ -49,11 +34,26 @@ public class BulletEnemy : MonoBehaviour {
         }
     }
 
-    public void OnTriggerEnter2D(Collider2D collision)
+    #region Unity Callback
+
+    // Use this for initialization
+    private void Start ()
     {
-        if(collision.tag == "Player")
-        {
-            Destroy(gameObject);
-        }
+        GetComponent<Rigidbody2D>().velocity = (transform.up * tamaSpeed);
     }
+
+    // Update is called once per frame
+    private void Update ()
+    {
+        ByeBye();   //消える
+        //Rotate();   //追尾    
+    }
+
+    private void OnTriggerEnter2D(Collider2D collision)
+    {
+        if (collision.CompareTag("Player"))
+            Destroy(gameObject);
+    }
+
+    #endregion
 }

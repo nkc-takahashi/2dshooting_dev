@@ -4614,7 +4614,6 @@ MonoBehaviour:
   - {fileID: 2044391221}
   MoveSpeed: 3
   HP: 10
-  deathEffect: {fileID: 0}
   DamageColor: {r: 0, g: 0, b: 0, a: 1}
   rotationspeed: 0
   bulletInterval: 0
@@ -6166,6 +6165,11 @@ Prefab:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 114319522336782740, guid: fd46379d9a594c341951b599fd7a96e2,
+        type: 2}
+      propertyPath: _bulletType.Array.size
+      value: 3
+      objectReference: {fileID: 0}
     - target: {fileID: 4003643908228616, guid: fd46379d9a594c341951b599fd7a96e2, type: 2}
       propertyPath: m_LocalPosition.x
       value: 0
@@ -6198,6 +6202,24 @@ Prefab:
       propertyPath: m_RootOrder
       value: 13
       objectReference: {fileID: 0}
+    - target: {fileID: 114319522336782740, guid: fd46379d9a594c341951b599fd7a96e2,
+        type: 2}
+      propertyPath: _bulletType.Array.data[0]
+      value: 
+      objectReference: {fileID: 1499106044914830, guid: 8a1bb5302d4b8224aa9de0b5a1105ecb,
+        type: 2}
+    - target: {fileID: 114319522336782740, guid: fd46379d9a594c341951b599fd7a96e2,
+        type: 2}
+      propertyPath: _bulletType.Array.data[1]
+      value: 
+      objectReference: {fileID: 1694499818795102, guid: b96e491072a44b542b85493e61dfc8d3,
+        type: 2}
+    - target: {fileID: 114319522336782740, guid: fd46379d9a594c341951b599fd7a96e2,
+        type: 2}
+      propertyPath: _bulletType.Array.data[2]
+      value: 
+      objectReference: {fileID: 1458217191945452, guid: 65d99628b89cdf7449370970530b8b86,
+        type: 2}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: fd46379d9a594c341951b599fd7a96e2, type: 2}
   m_IsPrefabParent: 0

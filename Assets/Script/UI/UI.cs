@@ -1,175 +1,195 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.UI;
 
-public class UI : MonoBehaviour {
-
-    public GameObject player,enemy;
-    public GameObject[] enemys;
-    public enum UIType
+namespace InariSystem.MajiManji
+{
+    public enum UITypes
     {
-        TypeA, TypeB
+        TypeA,
+        TypeB
     }
-    public UIType uitype;
-    public Image bulletright,bulletleft;
-    [ColorHtmlProperty]
-    public Color ManyColor;
-    [ColorHtmlProperty]
-    public Color lowColor;
-    public Text bulletAtxt, bulletBtxt;
-    public Text weapon, enemyHP,playerHP,shiledHP;
-    public Text playerstate;
-
-    public GameObject pouseui;
-
-    //private
-    float bulletvolume;
-    float bullettime,Weapontime;   //playerがdie状態の時に使用
-    string[] keys = { "a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z", "-", "0", "1", "2", "3", "4", "5", "6", "7", "8", "9"," ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " " };
-
-    void Start()
+    
+    public class UI : MonoBehaviour
     {
+
+        private Player _player;
         
-    }
+        public GameObject Enemy;
+        public GameObject[] Enemies;
 
-    void Update ()
-    {
-        setType(); player = GameObject.Find("Player"); Pouse();
-    }
-    void setType()
-    {
-        player = GameObject.Find("Player");
-        switch (uitype)
+        public UITypes UIType;
+        public Image BulletRight, BulletLeft;
+
+        [ColorHtmlProperty]
+        public Color ManyColor;
+
+        [ColorHtmlProperty]
+        public Color lowColor;
+
+        public Text bulletAtxt, bulletBtxt;
+        public Text weapon, enemyHP, playerHP, shiledHP;
+        public Text playerstate;
+
+        public GameObject PauseUI;
+
+        private float _bulletAmount;
+        private float _bulletTime, _weaponTime; //playerがdie状態の時に使用
+
+        private string[] keys =
         {
-            case UIType.TypeA:
-                BulletUI(); EnemyHP(); Weapon(); PlayerHP();
-                break;
-            case UIType.TypeB:
-                break;
+            "a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u",
+            "v", "w", "x", "y", "z", "-", "0", "1", "2", "3", "4", "5", "6", "7", "8", "9", " ", " ", " ", " ", " ",
+            " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " "
+        };
+
+        private void Update()
+        {
+            _player = GameObject.Find("Player").GetComponent<Player>();
+            
+            setType();
+            Pause();
         }
-    }
 
-
-    //----------UIType.TypeA----------//
-    void BulletUI()
-    {
-        if (player == null) {
-            bullettime -= Time.deltaTime;
-            if (bullettime <= 0)
+        private void setType()
+        {
+            switch (UIType)
             {
-                bullettime = 0.1f;
-                float f = Random.Range(10, 101);
-                bulletAtxt.text = f.ToString();
+                case UITypes.TypeA:
+                    BulletUI();
+                    EnemyHP();
+                    Weapon();
+                    PlayerHP();
+                    break;
             }
         }
-        else
-        {
-            if (player.GetComponent<Player>().noreloadswitch == true)
-            {
 
+
+        //----------UIType.TypeA----------//
+        private void BulletUI()
+        {
+            if (_player == null)
+            {
+                _bulletTime -= Time.deltaTime;
+                if (_bulletTime <= 0)
+                {
+                    _bulletTime = 0.1f;
+                    float f = Random.Range(10, 101);
+                    bulletAtxt.text = f.ToString();
+                }
             }
             else
             {
-                bulletvolume = player.GetComponent<Player>().remainingbulletvalue;
-                if (bulletvolume >= 50)
+                if (_player.noreloadswitch == true)
                 {
-                    bulletright.GetComponent<RectTransform>().sizeDelta = new Vector2(500, 25); bulletleft.GetComponent<RectTransform>().sizeDelta = new Vector2(500, 25);
-                }
-                else if(bulletvolume < 0)
-                {
-                    bulletright.GetComponent<RectTransform>().sizeDelta = new Vector2(bulletvolume * 0, 25); bulletleft.GetComponent<RectTransform>().sizeDelta = new Vector2(bulletvolume * 0, 25);
+
                 }
                 else
                 {
-                    bulletright.GetComponent<RectTransform>().sizeDelta = new Vector2(bulletvolume * 10, 25); bulletleft.GetComponent<RectTransform>().sizeDelta = new Vector2(bulletvolume * 10, 25);
-                }
+                    _bulletAmount = _player.remainingbulletvalue;
+                    if (_bulletAmount >= 50)
+                    {
+                        BulletRight.GetComponent<RectTransform>().sizeDelta = new Vector2(500, 25);
+                        BulletLeft.GetComponent<RectTransform>().sizeDelta = new Vector2(500, 25);
+                    }
+                    else if (_bulletAmount < 0)
+                    {
+                        BulletRight.GetComponent<RectTransform>().sizeDelta = new Vector2(_bulletAmount * 0, 25);
+                        BulletLeft.GetComponent<RectTransform>().sizeDelta = new Vector2(_bulletAmount * 0, 25);
+                    }
+                    else
+                    {
+                        BulletRight.GetComponent<RectTransform>().sizeDelta = new Vector2(_bulletAmount * 10, 25);
+                        BulletLeft.GetComponent<RectTransform>().sizeDelta = new Vector2(_bulletAmount * 10, 25);
+                    }
 
-                if (player.GetComponent<Player>().invisibleswitch == true)
-                {
-                    bulletAtxt.GetComponent<Text>().text = "Unlimited"; bulletBtxt.GetComponent<Text>().text = "Unlimited";
-                }
-                else
-                {
-                    bulletAtxt.GetComponent<Text>().text = bulletvolume.ToString(); bulletBtxt.GetComponent<Text>().text = bulletvolume.ToString();
-                }
+                    if (_player.invisibleswitch)
+                    {
+                        bulletAtxt.GetComponent<Text>().text = "Unlimited";
+                        bulletBtxt.GetComponent<Text>().text = "Unlimited";
+                    }
+                    else
+                    {
+                        bulletAtxt.GetComponent<Text>().text = _bulletAmount.ToString();
+                        bulletBtxt.GetComponent<Text>().text = _bulletAmount.ToString();
+                    }
 
-                if (bulletvolume <= 20)
-                {
-                    bulletright.GetComponent<Image>().color = lowColor; bulletleft.GetComponent<Image>().color = lowColor;
-                }
-                else
-                {
-                    bulletright.GetComponent<Image>().color = ManyColor;bulletleft.GetComponent<Image>().color = ManyColor;
+                    if (_bulletAmount <= 20)
+                    {
+                        BulletRight.GetComponent<Image>().color = lowColor;
+                        BulletLeft.GetComponent<Image>().color = lowColor;
+                    }
+                    else
+                    {
+                        BulletRight.GetComponent<Image>().color = ManyColor;
+                        BulletLeft.GetComponent<Image>().color = ManyColor;
+                    }
                 }
             }
         }
-    }
-    void Weapon()
-    {if (player == null)
+
+        private void Weapon()
         {
-            Weapontime -= Time.deltaTime;
-            if(Weapontime <= 0)
+            if (_player == null)
             {
-                Weapontime = 0.1f;
-                int i = keys.Length;
-                weapon.text = keys[Random.Range(0, i)] + keys[Random.Range(0, i)] + keys[Random.Range(0, i)] + keys[Random.Range(0, i)] + keys[Random.Range(0, i)] + keys[Random.Range(0, i)] + keys[Random.Range(0, i)];
+                _weaponTime -= Time.deltaTime;
+                if (_weaponTime <= 0)
+                {
+                    _weaponTime = 0.1f;
+                    int i = keys.Length;
+                    weapon.text = keys[Random.Range(0, i)] + keys[Random.Range(0, i)] + keys[Random.Range(0, i)] +
+                                  keys[Random.Range(0, i)] + keys[Random.Range(0, i)] + keys[Random.Range(0, i)] +
+                                  keys[Random.Range(0, i)];
+                }
             }
-        }
-        else
-        {
-            //weapon.text = player.GetComponent<PlayerControl>().bullet.name;
-        }
-    }
-    void EnemyHP()
-    {
-        enemyHP.text = enemy.GetComponent<EnemyMove>().HP.ToString();
-    }
-    void PlayerHP()
-    {
-        if (player.GetComponent<Player>().invisibleswitch == true)
-        {
-            playerHP.text = "Invisible";
-        }
-        else
-        {
-            playerHP.text = player.GetComponent<Player>().playerhp.ToString();
-        }
-    }
-
-    void Dietiming()
-    {
-
-    }
-
-    void Pouse()
-    {
-        if(Time.timeScale != 1)
-        {
-            pouseui.SetActive(true);
-        }
-        else
-        {
-            pouseui.SetActive(false);
-        }
-        if (Input.GetKeyDown("o"))
-        {
-            if (Time.timeScale > 0)
+            else
             {
-                Time.timeScale -=0.1f;
+                //weapon.text = player.GetComponent<PlayerControl>().bullet.name;
             }
         }
-        if (Input.GetKeyDown("p"))
-        {
-            if (Time.timeScale <= 1)
-            {
-                Time.timeScale += 0.1f;
-            }
-        }
-    }
 
-    void EnemyUI()
-    {
-        //gameObject[]enemy = GameObject.FindGameObjectsWithTag("Enemy");
+        private void EnemyHP()
+        {
+            enemyHP.text = Enemy.GetComponent<EnemyMove>().HP.ToString();
+        }
+
+        private void PlayerHP()
+        {
+            if (_player.invisibleswitch == true)
+            {
+                playerHP.text = "Invisible";
+            }
+            else
+            {
+                playerHP.text = _player.Health.ToString();
+            }
+        }
+
+        private void Pause()
+        {
+            if (Time.timeScale != 1)
+            {
+                PauseUI.SetActive(true);
+            }
+            else
+            {
+                PauseUI.SetActive(false);
+            }
+
+            if (Input.GetKeyDown("o"))
+            {
+                if (Time.timeScale > 0)
+                {
+                    Time.timeScale -= 0.1f;
+                }
+            }
+
+            if (Input.GetKeyDown("p"))
+            {
+                if (Time.timeScale <= 1)
+                {
+                    Time.timeScale += 0.1f;
+                }
+            }
+        }
     }
 }

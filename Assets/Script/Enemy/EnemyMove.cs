@@ -1,147 +1,185 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System;
+using System.Collections;
 using UnityEngine;
-using UnityEngine.UI;
+using Random = UnityEngine.Random;
 
-public class EnemyMove : MonoBehaviour {
-    public GameObject player, BulletTypeEnemy, muzzle;
+namespace InariSystem.MajiManji
+{
     public enum MoveType
     {
-        TypeA, TypeB, TypeC, TypeD
-    }
-    public MoveType movetype;
-
-    public GameObject[] pos;
-    //[HideInInspector]
-    public float MoveSpeed,HP;
-    public ParticleSystem deathEffect;
-    [ColorHtmlProperty] public Color DamageColor;
-
-    Vector3 MovingPosition, playerpos;
-    public float rotationspeed, bulletInterval;
-
-
-    public Vector3 v3;
-    //private
-    float interval;
-    int i;
-    public int bullet;
-
-    // Use this for initialization
-    void Start () {
-        muzzle = transform.Find("muzzle").gameObject;
-    }
-	
-	// Update is called once per frame
-	void Update() {
-        player = GameObject.FindWithTag("Player");
-        SetMoveType(); PlayerUpdate();
+        TypeA,
+        TypeB,
+        TypeC,
+        TypeD
     }
 
-    void SetMoveType()
+    public class EnemyMove : MonoBehaviour
     {
-        switch (movetype)
+        public GameObject player;
+        public GameObject BulletTypeEnemy;
+        public GameObject muzzle;
+
+        public MoveType movetype;
+
+        public GameObject[] pos;
+
+        //[HideInInspector]
+        public float MoveSpeed, HP;
+
+        [ColorHtmlProperty]
+        public Color DamageColor;
+
+        Vector3 MovingPosition, playerpos;
+        public float rotationspeed, bulletInterval;
+
+
+        public Vector3 v3;
+
+        //private
+        float interval;
+        
+        private int _destionationIndex;
+        public int bullet;
+
+        private SpriteRenderer _spriteRenderer;
+        
+        
+
+        private void SetMoveType()
         {
-            case MoveType.TypeA:
-                MoveTypeA(); Bullet(); Rotate();
-                break;
-            case MoveType.TypeB:
-                MoveTypeB(); Bullet(); Rotate();
-                break;
-            case MoveType.TypeC:
-
-                break;
-            case MoveType.TypeD:
-
-                break;
-        }
-    }
-
-
-    void MoveTypeA()
-    {
-        if (MovingPosition == transform.position)
-        {
-            if (i >= pos.Length)
+            switch (movetype)
             {
-                i = 0; 
-            }
-            else
-            {
-                i += 1;
+                case MoveType.TypeA:
+                    MoveTypeA();
+                    Bullet();
+                    Rotate();
+                    break;
+                case MoveType.TypeB:
+                    MoveTypeB();
+                    Bullet();
+                    Rotate();
+                    break;
+                case MoveType.TypeC:
+
+                    break;
+                case MoveType.TypeD:
+
+                    break;
             }
         }
-        MovingPosition = pos[i].GetComponent<Transform>().position;
-        transform.position = Vector3.MoveTowards(gameObject.transform.position, MovingPosition, MoveSpeed * Time.deltaTime);
-    }
 
+        #region Unity Callback
 
-    void MoveTypeB()
-    {
-        transform.position = Vector3.MoveTowards(gameObject.transform.position, player.transform.position, MoveSpeed * Time.deltaTime);
-    }
-
-
-
-
-    void DamageColorChange()
-    {
-        gameObject.GetComponent<SpriteRenderer>().color = new Color(1, 1, 1);
-    }
-    void Rotate()
-    {
-        if (player == null)
+        // Use this for initialization
+        private void Start()
         {
-            Quaternion rotation = Quaternion.LookRotation(v3, Vector3.down);
-            transform.rotation = Quaternion.Slerp(transform.rotation, rotation, Time.deltaTime * rotationspeed);
+            muzzle = transform.Find("muzzle").gameObject;
+            _spriteRenderer = GetComponent<SpriteRenderer>();
         }
-        else
-        {
-            Vector3 pos = transform.localPosition;
-            Vector3 playerpos = player.GetComponent<Transform>().position;
-            Quaternion rotation = Quaternion.LookRotation(Vector3.forward, playerpos - pos);
-            transform.rotation = Quaternion.Slerp(transform.rotation, rotation, Time.deltaTime * rotationspeed);
-        }
-    }
-    void Bullet()
-    {
-        interval -= Time.deltaTime;
-        bullet = Random.Range(0, 10);
-        if (player == null)
-        {
 
-        }
-        else
+        // Update is called once per frame
+        private void Update()
         {
-            if (interval <= 0 && bullet == 1)
-            {
-                interval = bulletInterval;
-                Instantiate(BulletTypeEnemy, muzzle.transform.position, transform.rotation);
-            }
+            player = GameObject.FindWithTag("Player");
+            SetMoveType();
+            PlayerUpdate();
         }
-    }
-
-
-    void PlayerUpdate()
-    {
-        if (player == null)
+        
+        private void OnTriggerEnter2D(Collider2D coll)
         {
-            player = GameObject.Find("Player");
-        }
-    }
-
-    void OnTriggerEnter2D(Collider2D coll)
-    {
-        HP -= 1;
-        if (coll.gameObject.tag == "Player")
-        {
-            gameObject.GetComponent<SpriteRenderer>().color = DamageColor;
-            Invoke("DamageColorChange", 0.1f);
+            HP -= 1;
+            if (!coll.gameObject.CompareTag("Player")) return;
+            
+            _spriteRenderer.color = DamageColor;
+                
+            DelayMethod(0.1f, DamageColorChange);
             if (HP < 0)
             {
                 //Instantiate(deathEffect, transform.position, Quaternion.identity);
                 Destroy(gameObject);
             }
         }
+
+        #endregion
+
+        #region StateMachine
+
+        private void MoveTypeA()
+        {
+            if (Vector3.Distance(MovingPosition, transform.position) < 0.1f)
+                _destionationIndex = _destionationIndex == pos.Length - 1 ? 0 : _destionationIndex + 1;
+
+            MovingPosition = pos[_destionationIndex].transform.position;
+            
+            var dest = Vector3.MoveTowards(transform.position, MovingPosition, MoveSpeed * Time.deltaTime);
+            transform.position = dest;
+        }
+
+        private void MoveTypeB()
+        {
+            var moveDir = MoveSpeed * Time.deltaTime;
+            var dest = Vector3.MoveTowards(transform.position, player.transform.position, moveDir);
+            transform.position = dest;
+        }
+
+        #endregion
+        
+        private void Rotate()
+        {
+            if (player == null)
+            {
+                var rotation = Quaternion.LookRotation(v3, Vector3.down);
+                transform.rotation = Quaternion.Slerp(transform.rotation, rotation, Time.deltaTime * rotationspeed);
+            }
+            else
+            {
+                var pos = transform.localPosition;
+                var playerpos = player.GetComponent<Transform>().position;
+                var rotation = Quaternion.LookRotation(Vector3.forward, playerpos - pos);
+                transform.rotation = Quaternion.Slerp(transform.rotation, rotation, Time.deltaTime * rotationspeed);
+            }
+        }
+
+        private void DamageColorChange()
+        {
+            gameObject.GetComponent<SpriteRenderer>().color = new Color(1, 1, 1);
+        }
+
+
+        private void Bullet()
+        {
+            interval -= Time.deltaTime;
+            bullet = Random.Range(0, 10);
+            if (player == null) return;
+            if (!(interval <= 0) || bullet != 1) return;
+            
+            interval = bulletInterval;
+            Instantiate(BulletTypeEnemy, muzzle.transform.position, transform.rotation);
+        }
+
+
+        private void PlayerUpdate()
+        {
+            if (player == null)
+            {
+                player = GameObject.Find("Player");
+            }
+        }
+
+        #region Utility
+
+        private void DelayMethod(float delayTime, Action action)
+        {
+            StartCoroutine(DelayMethodBody(delayTime, action));
+        }
+
+        private static IEnumerator DelayMethodBody(float delayTime, Action action)
+        {
+            yield return new WaitForSeconds(delayTime);
+
+            action?.Invoke();
+        }
+
+        #endregion
     }
 }

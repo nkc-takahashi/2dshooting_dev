@@ -1,53 +1,56 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.Text;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class PlayerStateUI : MonoBehaviour {
-    public GameObject player, playerctrl;
-    Text STATEUI;
-    private void Start()
+namespace InariSystem.MajiManji
+{
+    public class PlayerStateUI : MonoBehaviour
     {
-        STATEUI = this.GetComponent<Text>();
-    }
+        public GameObject Player, PlayerControl;
+        
+        private Text _stateLabel;
 
-    // Update is called once per frame
-    void Update () {
-        player = GameObject.Find("Player");
-        playerctrl = GameObject.Find("PlayerController");
+        private Player _player;
+        private PlayerControl _playerControl;
 
-        STATEUI.text =
-            "PLAYER CTRL" + "\n" +
-            "Speed :" +
-            "x" + playerctrl.GetComponent<PlayerControl>().speedx.ToString() +
-            "Y" + playerctrl.GetComponent<PlayerControl>().speedy.ToString() + "\n" +
-            "PLayerHP :" +
-            playerctrl.GetComponent<PlayerControl>().playerhp.ToString() + "\n" +
-            "shieldHP :" +
-            playerctrl.GetComponent<PlayerControl>().shieldhp.ToString() + "\n" +
-            "BulletVolume :" +
-            playerctrl.GetComponent<PlayerControl>().bulletvolume.ToString() + "\n" +
-            "Bulletinterval :" +
-            playerctrl.GetComponent<PlayerControl>().bulletinterval.ToString() + "\n" +
-            "Trajectoryvalue :" +
-            playerctrl.GetComponent<PlayerControl>().trajectoryvalue.ToString() + "\n" +
-            "rotationspeed :" +
-            playerctrl.GetComponent<PlayerControl>().rotationspeed.ToString() + "\n" + "\n" +
+        private void Start()
+        {
+            _stateLabel = GetComponent<Text>();
 
-            "PLAYER" + "\n" +
-            "x" + playerctrl.GetComponent<PlayerControl>().speedx.ToString() +
-            "Y" + playerctrl.GetComponent<PlayerControl>().speedy.ToString() + "\n" +
-            "PLayerHP :" +
-            player.GetComponent<Player>().playerhp.ToString() + "\n" +
-            "shieldHP :" +
-            player.GetComponent<Player>().shieldhp.ToString() + "\n" +
-            "BulletVolume :" +
-            player.GetComponent<Player>().bulletvolume.ToString() + "\n" +
-            "Bulletinterval :" +
-            player.GetComponent<Player>().bulletinterval.ToString() + "\n" +
-            "Trajectoryvalue :" +
-            player.GetComponent<Player>().trajectoryvalue.ToString() + "\n" +
-            "rotationspeed :" +
-            player.GetComponent<Player>().rotationspeed.ToString() + "\n" + "\n" + "Debugmode";
+            _player = Player.GetComponent<Player>();
+            _playerControl = PlayerControl.GetComponent<PlayerControl>();
+        }
+
+        // Update is called once per frame
+        private void Update()
+        {
+            var builder = new StringBuilder();
+
+            builder.AppendLine("Player Control");
+            builder.AppendLine($"Speed X:{_playerControl.SpeedX} Y:{_playerControl.SpeedY}");
+            builder.AppendLine($"PlayerHP: {_playerControl.Health}");
+            builder.AppendLine($"ShieldHP: {_playerControl.Shield}");
+            builder.AppendLine($"BulletAmount: {_playerControl.BulletAmount}");
+            builder.AppendLine($"BulletInterval: {_playerControl.BulletInterval}");
+            builder.AppendLine($"TrajectoryAmount: {_playerControl.TrajectoryAmount}");
+            builder.AppendLine($"RotationSpeed: {_playerControl.RotationSpeed}");
+            builder.AppendLine();
+
+            builder.AppendLine("Player");
+            builder.AppendLine($"Pos:{_player.Position}");
+            builder.AppendLine($"PlayerHP: {_player.Health}");
+            builder.AppendLine($"ShieldHP: {_player.Shield}");
+            builder.AppendLine($"BulletAmount: {_player.BulletAmount}");
+            builder.AppendLine($"BulletInterval: {_player.BulletInterval}");
+            builder.AppendLine($"TrajectoryAmount: {_player.TrajectoryAmount}");
+            builder.AppendLine($"RotationSped: {_player.RotationSpeed}");
+            builder.AppendLine();
+            builder.AppendLine();
+            builder.AppendLine("DebugMode");
+
+            _stateLabel.text = builder.ToString();
+        }
     }
 }

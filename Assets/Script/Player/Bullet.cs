@@ -3,159 +3,168 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class Bullet : MonoBehaviour {
+namespace InariSystem.MajiManji
+{
     public enum BulletType
     {
-        TypeA,          //ますぐ
-        TypeB,           //追尾弾
+        TypeA, //ますぐ
+        TypeB, //追尾弾
         TypeC
     }
-    public BulletType bullettype;
-    public float bulletspeed, homingrotatespeed, homingtiming, destroytiming , distanceangle, distance,angle;
-    public GameObject player, enemy;
-    public GameObject[] enemybox;
-    public Vector2 targetenemypoint, targetenemy, enemypos,bulletpos, bulleteye;
-
-    //TypeB
-    public float hoomingbullet, enemyupdateinterval; float updateinterval;
-
-
-
-
-    ////public bool mouserotateswitch;
-    public float DestroyTiming,valuez;
-    Rigidbody2D rd;
-
-    public bool rockon;
-
-
-
-    // Use this for initialization
-    void Start()
+    
+    public class Bullet : MonoBehaviour
     {
-        rd = GetComponent<Rigidbody2D>(); rd.velocity = (transform.up * bulletspeed);
-        player = GameObject.Find("Player");
-        enemy = GameObject.Find("Enemy");
-    }
+        public BulletType BulletType;
+        public float Speed, RotationSpeed, HomingTiming, LifeTime, LimitAngle, Distance, Angle;
+        public GameObject player, enemy;
+        public GameObject[] enemybox;
+        public Vector2 targetenemypoint, targetenemy, enemypos, bulletpos, bulleteye;
+
+        //TypeB
+        public float hoomingbullet, enemyupdateinterval;
+        float updateinterval;
+
+        ////public bool mouserotateswitch;
+        public float DestroyTiming, valuez;
+        private Rigidbody2D _rigidbody;
+
+        public bool rockon;
 
 
-    // Update is called once per frame
-    void Update()
-    {
-        bullettypeset();
-    }
 
-
-    void bullettypeset()
-    {
-        switch (bullettype)
+        // Use this for initialization
+        private void Start()
         {
-            case BulletType.TypeA:
-                BulletTypeA();
-                break;
-            case BulletType.TypeB:
-                BulletTypeB();
-                break;
-            case BulletType.TypeC:
-                BulletTypeC();
-                break;
+            _rigidbody = GetComponent<Rigidbody2D>();
+            _rigidbody.velocity = transform.up * Speed;
+            
+            player = GameObject.Find("Player");
+            enemy = GameObject.Find("Enemy");
         }
-    }
 
 
-    void BulletTypeA()
-    {
-        rd.velocity = (transform.up * bulletspeed);
-        ByeBye();
-    }
-
-
-    void BulletTypeB()
-    {
-        enemypos = enemy.transform.position; bulletpos = this.transform.position; bulleteye = this.transform.up;
-        if (Vector3.Distance(enemypos, bulletpos) <= distance && Vector3.Angle((enemypos - bulletpos).normalized, bulleteye) <= angle) rockon = true;
-        else rockon = false;
-        if (rockon)
+        // Update is called once per frame
+        private void Update()
         {
-            targetenemy = enemy.transform.position;
-            Vector2 targetenemypoint = (Vector2)transform.position - targetenemy;
-            targetenemypoint.Normalize();
-            valuez = Vector3.Cross(targetenemypoint, transform.up).z;
-            if (valuez > 0) rd.angularVelocity = homingrotatespeed;
-            else if (valuez < 0) rd.angularVelocity = -homingrotatespeed;
-            else homingrotatespeed = 0;
-            rd.angularVelocity = homingrotatespeed * valuez;
-            rd.velocity = transform.up * bulletspeed;
+            BulletBehaviour();
         }
-        else
+
+
+        private void BulletBehaviour()
         {
-            rd.angularVelocity = 0;
-            rd.velocity = (transform.up * bulletspeed);
+            switch (BulletType)
+            {
+                case BulletType.TypeA: BulletTypeA(); break;
+                case BulletType.TypeB: BulletTypeB(); break;
+                case BulletType.TypeC: BulletTypeC(); break;
+            }
         }
-    }
-    void BulletTypeC()
-    {
-        if (enemy == null)
+
+
+        private void BulletTypeA()
         {
-            ByeBye();
+            _rigidbody.velocity = (transform.up * Speed);
+            Despawn();
         }
-        else
+
+
+        private void BulletTypeB()
         {
             enemypos = enemy.transform.position;
-            if (homingtiming <= 0)
+            bulletpos = transform.position;
+            bulleteye = transform.up;
+            if (Vector3.Distance(enemypos, bulletpos) <= Distance &&
+                Vector3.Angle((enemypos - bulletpos).normalized, bulleteye) <= Angle) rockon = true;
+            else rockon = false;
+            if (rockon)
             {
-                updateinterval -= Time.deltaTime;
-                destroytiming -= Time.deltaTime;
-                Vector2 targetenemypoint = (Vector2)transform.position - targetenemy;
-                targetenemypoint.Normalize();
-                valuez = Vector3.Cross(targetenemypoint, transform.up).z;
-                if (valuez > 0) rd.angularVelocity = homingrotatespeed;
-                else if (valuez < 0) rd.angularVelocity = -homingrotatespeed;
-                else homingrotatespeed = 0;
-                rd.angularVelocity = homingrotatespeed * valuez;
-                rd.velocity = transform.up * bulletspeed;
-                if (updateinterval < 0)
-                {
-                    targetenemy = enemy.transform.position;
-                    updateinterval = enemyupdateinterval;
-                }
+                targetenemy = enemy.transform.position;
+                var targetPosition = (Vector2) transform.position - targetenemy;
+                targetPosition.Normalize();
+                valuez = Vector3.Cross(targetPosition, transform.up).z;
+                if (valuez > 0) _rigidbody.angularVelocity = RotationSpeed;
+                else if (valuez < 0) _rigidbody.angularVelocity = -RotationSpeed;
+                else RotationSpeed = 0;
+                _rigidbody.angularVelocity = RotationSpeed * valuez;
+                _rigidbody.velocity = transform.up * Speed;
             }
             else
             {
-                homingtiming -= Time.deltaTime;
-                rd.velocity = (transform.up * bulletspeed);
+                _rigidbody.angularVelocity = 0;
+                _rigidbody.velocity = (transform.up * Speed);
             }
-            if (destroytiming < 0) Destroy(gameObject);
         }
-        ByeBye();
-    }
-    void BulletTypeD()
-    {
-        enemypos = enemy.transform.position; bulletpos = this.transform.position; bulleteye = this.transform.forward;
-        if (Vector3.Distance(enemypos, bulletpos) <= distance && Vector3.Angle((enemypos - bulletpos).normalized, bulleteye) <= angle)
+
+        private void BulletTypeC()
         {
+            if (enemy == null)
+            {
+                Despawn();
+            }
+            else
+            {
+                enemypos = enemy.transform.position;
+                if (HomingTiming <= 0)
+                {
+                    updateinterval -= Time.deltaTime;
+                    LifeTime -= Time.deltaTime;
+                    var targetPosition = (Vector2) transform.position - targetenemy;
+                    targetPosition.Normalize();
+                    valuez = Vector3.Cross(targetPosition, transform.up).z;
+                    if (valuez > 0) _rigidbody.angularVelocity = RotationSpeed;
+                    else if (valuez < 0) _rigidbody.angularVelocity = -RotationSpeed;
+                    else RotationSpeed = 0;
+                    _rigidbody.angularVelocity = RotationSpeed * valuez;
+                    _rigidbody.velocity = transform.up * Speed;
+                    if (updateinterval < 0)
+                    {
+                        targetenemy = enemy.transform.position;
+                        updateinterval = enemyupdateinterval;
+                    }
+                }
+                else
+                {
+                    HomingTiming -= Time.deltaTime;
+                    _rigidbody.velocity = (transform.up * Speed);
+                }
+
+                if (LifeTime < 0) Destroy(gameObject);
+            }
+
+            Despawn();
         }
-        else
+
+        private void BulletTypeD()
         {
-            rd.velocity = (transform.up * bulletspeed);
+            enemypos = enemy.transform.position;
+            bulletpos = transform.position;
+            bulleteye = transform.forward;
+            if (Vector3.Distance(enemypos, bulletpos) <= Distance &&
+                Vector3.Angle((enemypos - bulletpos).normalized, bulleteye) <= Angle)
+            {
+            }
+            else
+            {
+                _rigidbody.velocity = (transform.up * Speed);
+            }
         }
-    }
 
 
-    void ByeBye()
-    {
-        DestroyTiming -= Time.deltaTime;
-        if (DestroyTiming <= 0)
+        private void Despawn()
         {
-            Destroy(gameObject);
+            DestroyTiming -= Time.deltaTime;
+            if (DestroyTiming <= 0)
+            {
+                Destroy(gameObject);
+            }
         }
-    }
 
-    public void OnTriggerEnter2D(Collider2D collision)
-    {
-        if (collision.gameObject.tag == "Enemy"|| collision.gameObject.tag == "BulletTypeEnemy")
+        private void OnTriggerEnter2D(Collider2D other)
         {
-            Destroy(gameObject);
+            if (other.CompareTag("Enemy") || other.CompareTag("BulletTypeEnemy"))
+            {
+                Destroy(gameObject);
+            }
         }
     }
 }

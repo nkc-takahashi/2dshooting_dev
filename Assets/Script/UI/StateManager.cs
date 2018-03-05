@@ -3,15 +3,18 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class StateManager : MonoBehaviour {
-    public GameObject[] State;
-    public float point;
-    public Text pointtext;
+namespace InariSystem.MajiManji
+{
+	public class StateManager : MonoBehaviour 
+	{
+		public GameObject[] State;
+		public float Point;
+		public Text PointLabel;
 
-    void Update()
-    {
-        pointtext.text = point.ToString();
-    }
-    
-
+		private void Update()
+		{
+			PointLabel.text = Point.ToString();
+		}
+	}
 }
+
