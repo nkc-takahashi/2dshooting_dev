@@ -53,22 +53,26 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Playerprefab: {fileID: 1223027439154514, guid: fd46379d9a594c341951b599fd7a96e2,
     type: 2}
+  playerSpawnscene: 2DShooting
   speedx: 0.1
   speedy: 0.1
-  bulletvolume: 0
+  bulletvolume: 100
   bulletinterval: 0.1
   trajectoryvalue: 1
   rotationspeed: 20
   reroadinterval: 1
   playerhp: 5
-  shiledhp: 0
+  shieldhp: 0
   playerpos: {x: 0, y: 0, z: 0}
   modechange: 0
   mouseinputswitch: 0
   reroadswitch: 0
-  shiledswitch: 0
+  shieldswitch: 0
   invisibleswitch: 0
   bullettype: 0
+  hpsort: {fileID: 0}
+  shieldhpsort: {fileID: 0}
+  speedsort: {fileID: 0}
   Bullettype:
   - {fileID: 0}
   player: {fileID: 0}

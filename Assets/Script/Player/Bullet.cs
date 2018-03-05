@@ -13,7 +13,6 @@ public class Bullet : MonoBehaviour {
     public BulletType bullettype;
     public float bulletspeed, homingrotatespeed, homingtiming, destroytiming , distanceangle, distance,angle;
     public GameObject player, enemy;
-    public GameObject[] enemybox;
     public Vector2 targetenemypoint, targetenemy, enemypos,bulletpos, bulleteye;
 
     //TypeB
@@ -42,7 +41,7 @@ public class Bullet : MonoBehaviour {
     // Update is called once per frame
     void Update()
     {
-        bullettypeset();
+        bullettypeset(); ByeBye();
     }
 
 

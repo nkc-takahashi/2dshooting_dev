@@ -29,12 +29,14 @@ public class Player : MonoBehaviour
     GameObject playerctrl, bullet, muzzle,shieldobj;
     public GameObject shield;
     public GameObject Maxpos, Minpos;
-
+    public GameObject BulletBox;
     public Vector2 maxpos, minpos;
     Quaternion bulletRough;Rigidbody2D rd;
     [System.NonSerialized] public float remainingbulletvalue;
     [System.NonSerialized] public Vector2 Position;
     [System.NonSerialized] public string bullettype;
+
+    public float dis;
 
     void Start()
     {
@@ -142,6 +144,7 @@ public class Player : MonoBehaviour
             Quaternion rotation = Quaternion.LookRotation(Vector3.forward, Vector3.up);
             transform.rotation = Quaternion.Slerp(transform.rotation, rotation, Time.deltaTime * rotationspeed);
         }
+        Corsor();
     }
 
 
@@ -157,7 +160,7 @@ public class Player : MonoBehaviour
             {
                 interval = bulletinterval;
                 remainingbulletvalue -= 1;
-                Instantiate(bullet, muzzle.transform.position, bulletRough);
+                Instantiate(bullet, muzzle.transform.position, bulletRough,BulletBox.transform);
                 Debug.Log("発砲");
             }
             else
@@ -257,5 +260,19 @@ public class Player : MonoBehaviour
                 Destroy(gameObject);
             }
         }
+    }
+
+    void Corsor()
+    {
+        if (mouseinputswitch)
+        {
+            Cursor.visible = true;
+            dis = Vector3.Distance(transform.position, Input.mousePosition);
+            if(dis <= 3) { }
+        }
+        else
+        {
+            Cursor.visible = false;
+        }   
     }
 }

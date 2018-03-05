@@ -9,6 +9,7 @@ public class PlayerStateUI : MonoBehaviour {
     private void Start()
     {
         STATEUI = this.GetComponent<Text>();
+
     }
 
     // Update is called once per frame
@@ -42,7 +43,7 @@ public class PlayerStateUI : MonoBehaviour {
             "shieldHP :" +
             player.GetComponent<Player>().shieldhp.ToString() + "\n" +
             "BulletVolume :" +
-            player.GetComponent<Player>().bulletvolume.ToString() + "\n" +
+            player.GetComponent<Player>().remainingbulletvalue.ToString() + "\n" +
             "Bulletinterval :" +
             player.GetComponent<Player>().bulletinterval.ToString() + "\n" +
             "Trajectoryvalue :" +

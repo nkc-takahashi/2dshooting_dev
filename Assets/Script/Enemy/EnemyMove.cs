@@ -4,7 +4,7 @@ using UnityEngine;
 using UnityEngine.UI;
 
 public class EnemyMove : MonoBehaviour {
-    public GameObject player, BulletTypeEnemy, muzzle;
+    public GameObject player, target, motherbase,BulletTypeEnemy, muzzle,Bullet_Box;
     public enum MoveType
     {
         TypeA, TypeB, TypeC, TypeD
@@ -49,7 +49,7 @@ public class EnemyMove : MonoBehaviour {
                 MoveTypeB(); Bullet(); Rotate();
                 break;
             case MoveType.TypeC:
-
+                Bullet(); Rotate();
                 break;
             case MoveType.TypeD:
 
@@ -80,6 +80,10 @@ public class EnemyMove : MonoBehaviour {
     {
         transform.position = Vector3.MoveTowards(gameObject.transform.position, player.transform.position, MoveSpeed * Time.deltaTime);
     }
+    //void MoveTypeB()
+    //{
+    //    transform.position = Vector3.MoveTowards(gameObject.transform.position, player.transform.position, MoveSpeed * Time.deltaTime);
+    //}
 
 
 
@@ -88,21 +92,35 @@ public class EnemyMove : MonoBehaviour {
     {
         gameObject.GetComponent<SpriteRenderer>().color = new Color(1, 1, 1);
     }
+
+
     void Rotate()
     {
-        if (player == null)
+        if (target == null)
         {
-            Quaternion rotation = Quaternion.LookRotation(v3, Vector3.down);
-            transform.rotation = Quaternion.Slerp(transform.rotation, rotation, Time.deltaTime * rotationspeed);
+            if (player == null)
+            {
+                Quaternion rotation = Quaternion.LookRotation(v3, Vector3.down);
+                transform.rotation = Quaternion.Slerp(transform.rotation, rotation, Time.deltaTime * rotationspeed);
+            }
+            else
+            {
+                Vector3 pos = transform.localPosition;
+                Vector3 playerpos = player.GetComponent<Transform>().position;
+                Quaternion rotation = Quaternion.LookRotation(Vector3.forward, playerpos - pos);
+                transform.rotation = Quaternion.Slerp(transform.rotation, rotation, Time.deltaTime * rotationspeed);
+            }
         }
         else
         {
             Vector3 pos = transform.localPosition;
-            Vector3 playerpos = player.GetComponent<Transform>().position;
-            Quaternion rotation = Quaternion.LookRotation(Vector3.forward, playerpos - pos);
+            Vector3 targetpos = player.GetComponent<Transform>().position;
+            Quaternion rotation = Quaternion.LookRotation(Vector3.forward, targetpos - pos);
             transform.rotation = Quaternion.Slerp(transform.rotation, rotation, Time.deltaTime * rotationspeed);
         }
     }
+
+
     void Bullet()
     {
         interval -= Time.deltaTime;
@@ -116,7 +134,7 @@ public class EnemyMove : MonoBehaviour {
             if (interval <= 0 && bullet == 1)
             {
                 interval = bulletInterval;
-                Instantiate(BulletTypeEnemy, muzzle.transform.position, transform.rotation);
+                Instantiate(BulletTypeEnemy, muzzle.transform.position, transform.rotation,Bullet_Box.transform);
             }
         }
     }
@@ -126,18 +144,18 @@ public class EnemyMove : MonoBehaviour {
     {
         if (player == null)
         {
-            player = GameObject.Find("Player");
+            player = GameObject.Find("Bullet");
         }
     }
 
     void OnTriggerEnter2D(Collider2D coll)
     {
-        HP -= 1;
-        if (coll.gameObject.tag == "Player")
+        if (coll.gameObject.tag == "Bullet")
         {
+            HP -= 1;
             gameObject.GetComponent<SpriteRenderer>().color = DamageColor;
             Invoke("DamageColorChange", 0.1f);
-            if (HP < 0)
+            if (HP <= 0)
             {
                 //Instantiate(deathEffect, transform.position, Quaternion.identity);
                 Destroy(gameObject);
