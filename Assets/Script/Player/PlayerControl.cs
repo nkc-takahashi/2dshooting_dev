@@ -96,10 +96,10 @@ namespace InariSystem.MajiManji
 
         public void Statesort()
         {
-            Health += hpsort.GetComponent<StateSort>().value;
-            Shield += shieldhpsort.GetComponent<StateSort>().value;
-            SpeedX += speedsort.GetComponent<StateSort>().value;
-            SpeedY += speedsort.GetComponent<StateSort>().value;
+            Health += hpsort.GetComponent<StateModifyView>().Amount;
+            Shield += shieldhpsort.GetComponent<StateModifyView>().Amount;
+            SpeedX += speedsort.GetComponent<StateModifyView>().Amount;
+            SpeedY += speedsort.GetComponent<StateModifyView>().Amount;
             DontDestroyOnLoad(gameObject);
             SceneManager.LoadScene("2DShooting");
         }

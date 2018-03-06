@@ -5,15 +5,36 @@ using UnityEngine.UI;
 
 namespace InariSystem.MajiManji
 {
-	public class StateManager : MonoBehaviour 
+	public class StateManager : MonoBehaviour
 	{
-		public GameObject[] State;
-		public float Point;
-		public Text PointLabel;
+		[SerializeField]
+		private Text _pointLabel;
 
-		private void Update()
+		[SerializeField]
+		private int _point = 100;
+		public int Point
 		{
-			PointLabel.text = Point.ToString();
+			get { return _point; }
+			private set
+			{
+				_point = value;
+				_pointLabel.text = $"POINT: {_point:000}";
+			}
+		}
+
+		private void Start()
+		{
+			Point = _point;
+		}
+
+		public void Increment()
+		{
+			Point++;
+		}
+
+		public void Decrement()
+		{
+			Point = Mathf.Max(0, Point - 1);
 		}
 	}
 }
